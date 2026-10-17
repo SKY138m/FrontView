@@ -94,7 +94,7 @@ fun NewsScreen(onClose: () -> Unit) {
             }
         }
         VGap(16)
-        Column(Modifier.fillMaxWidth().panel(Palette.Blue, 24).background(Palette.NewsFeature).padding(28.dx)) {
+        Column(Modifier.fillMaxWidth().panel(Palette.Blue, 24).background(Palette.NewsFeature).clickable { AppActions.openUrl(SampleData.newsFeature.url) }.padding(28.dx)) {
             T(SampleData.newsFeature.source, 18, Palette.OnDark85)
             VGap(6)
             T(SampleData.newsFeature.title, 34, Color.White, 700, maxLines = 3)

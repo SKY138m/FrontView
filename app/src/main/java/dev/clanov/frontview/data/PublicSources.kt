@@ -96,15 +96,17 @@ class PublicSources(private val client: OkHttpClient = OkHttpClient()) {
         var inItem = false
         var title = ""
         var source = ""
+        var link = ""
         while (parser.eventType != XmlPullParser.END_DOCUMENT && rows.size < 20) {
             if (parser.eventType == XmlPullParser.START_TAG) {
                 when (parser.name) {
-                    "item" -> { inItem = true; title = ""; source = "" }
+                    "item" -> { inItem = true; title = ""; source = ""; link = "" }
                     "title" -> if (inItem) title = parser.nextText()
                     "source" -> if (inItem) source = parser.nextText()
+                    "link" -> if (inItem) link = parser.nextText()
                 }
             } else if (parser.eventType == XmlPullParser.END_TAG && parser.name == "item") {
-                if (title.isNotBlank()) rows.add(NewsRow(title, source))
+                if (title.isNotBlank()) rows.add(NewsRow(title, source, link))
                 inItem = false
             }
             parser.next()
@@ -113,6 +115,50 @@ class PublicSources(private val client: OkHttpClient = OkHttpClient()) {
             SampleData.newsFeature = rows.first()
             SampleData.news = rows.drop(1)
         }
+    }
+
+    suspend fun track(key: String, carrier: String, invoice: String) = withContext(Dispatchers.IO) {
+        require(key.isNotBlank() && carrier.isNotBlank() && invoice.isNotBlank())
+        val url = HttpUrl.Builder().scheme("https").host("info.sweettracker.co.kr")
+            .addPathSegments("api/v1/trackingInfo")
+            .addQueryParameter("t_key", key)
+            .addQueryParameter("t_code", carrier)
+            .addQueryParameter("t_invoice", invoice)
+            .build()
+        val response = JSONObject(get(url.toString()))
+        val code = response.optString("code")
+        check(code == "0" || code == "200" || code == "") {
+            "Parcel API code " + code
+        }
+        val done = response.optString("completeYN").equals("Y", true)
+        val details = response.optJSONArray("trackingDetails")
+        val steps = mutableListOf<TrackStep>()
+        if (details != null) {
+            for (i in 0 until details.length()) {
+                val s = details.getJSONObject(i)
+                steps.add(TrackStep(
+                    label = s.optString("kind", "배송 정보"),
+                    place = s.optString("where"),
+                    time = s.optString("timeString"),
+                    reached = true,
+                    current = i == details.length() - 1
+                ))
+            }
+        }
+        val status = steps.lastOrNull()?.label
+            ?: if (done) "배송 완료" else "조회됨"
+        val progress = when {
+            done -> 5
+            status.contains("배송 출발") -> 4
+            status.contains("터미널") || status.contains("이동") -> 3
+            steps.isNotEmpty() -> 1
+            else -> 0
+        }
+        SampleData.parcels = listOf(
+            ParcelRow(response.optString("itemName").ifBlank { "운송장 " + invoice },
+                status, carrier + " · " + invoice, progress, done)
+        )
+        SampleData.trackSteps = steps
     }
 
     suspend fun baseball(date: LocalDate = LocalDate.now()) = withContext(Dispatchers.IO) {
@@ -130,10 +176,10 @@ class PublicSources(private val client: OkHttpClient = OkHttpClient()) {
                 it.optString("awayTeamName") + " vs " + it.optString("homeTeamName"),
                 it.optString("statusInfo").ifBlank { it.optString("statusCode") } +
                     " " + it.optString("awayTeamScore", "-") + ":" + it.optString("homeTeamScore", "-"),
-                it.optString("statusCode") == "LIVE"
+                it.optString("statusCode") == "STARTED"
             )
         }
-        val active = rows.firstOrNull { it.optString("statusCode") == "LIVE" }
+        val active = rows.firstOrNull { it.optString("statusCode") == "STARTED" }
             ?: rows.firstOrNull()
         if (active == null) {
             SampleData.statusLine = "경기 없음"
@@ -152,7 +198,7 @@ class PublicSources(private val client: OkHttpClient = OkHttpClient()) {
             active.optString("homeTeamName")
         SampleData.PITCHER = active.optString("homeCurrentPitcherName").ifBlank { "-" }
         SampleData.BATTER = "-"
-        if (active.optString("statusCode") != "LIVE") {
+        if (active.optString("statusCode") != "STARTED") {
             SampleData.countLine = ""
             return@withContext
         }
