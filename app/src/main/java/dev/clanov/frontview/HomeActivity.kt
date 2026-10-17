@@ -49,11 +49,19 @@ class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        google = GoogleConnection(this) {
-            lifecycleScope.launch { google.refresh() }
-        }
+        google = GoogleConnection(
+            this,
+            onAuthorized = {
+                AppActions.googleConnected = true
+                Toast.makeText(this, "Google 계정 연결 완료", Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch { google.refresh() }
+            },
+            onAuthError = { message ->
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+        )
         tracking = TrackingSettings(this)
-        AppActions.googleConnected = { google.isAuthorized }
+        AppActions.googleConnected = google.isAuthorized
         AppActions.signIn = { google.signIn() }
         AppActions.completeTask = { task ->
             lifecycleScope.launch {
@@ -213,6 +221,7 @@ class HomeActivity : ComponentActivity() {
         super.onDestroy()
         google.close()
         AppActions.signIn = {}
+        AppActions.googleConnected = false
         AppActions.openUrl = {}
         AppActions.openMail = {}
         AppActions.music = {}

@@ -37,7 +37,11 @@ import android.security.keystore.KeyProperties
 import java.security.KeyStore
 import kotlin.coroutines.resume
 
-class GoogleConnection(private val activity: Activity, private val onAuthorized: () -> Unit) {
+class GoogleConnection(
+    private val activity: Activity,
+    private val onAuthorized: () -> Unit,
+    private val onAuthError: (String) -> Unit = {}
+) {
     private val service = AuthorizationService(activity)
     private val client = OkHttpClient()
     private val stateStore = AuthCipher(activity)
@@ -49,7 +53,7 @@ class GoogleConnection(private val activity: Activity, private val onAuthorized:
 
     fun signIn() {
         if (BuildConfig.GOOGLE_CLIENT_ID.isBlank()) {
-            android.widget.Toast.makeText(activity, "Google OAuth Client ID 설정 필요", android.widget.Toast.LENGTH_SHORT).show()
+            onAuthError("이 APK에 Google 로그인 설정이 없습니다. OAuth 설정된 서명 APK가 필요합니다.")
             return
         }
         val config = AuthorizationServiceConfiguration(
@@ -72,16 +76,27 @@ class GoogleConnection(private val activity: Activity, private val onAuthorized:
     }
 
     fun handleResult(requestCode: Int, data: Intent?) {
-        if (requestCode != REQUEST_CODE || data == null) return
+        if (requestCode != REQUEST_CODE) return
+        if (data == null) {
+            onAuthError("Google 로그인이 취소되었습니다.")
+            return
+        }
         val response = AuthorizationResponse.fromIntent(data)
         val error = AuthorizationException.fromIntent(data)
         state.update(response, error)
         save()
+        if (error != null) {
+            onAuthError(error.errorDescription ?: "Google 인증에 실패했습니다.")
+            return
+        }
         if (response != null) {
             service.performTokenRequest(response.createTokenExchangeRequest()) { token, ex ->
                 state.update(token, ex)
                 save()
-                if (state.isAuthorized) activity.runOnUiThread(onAuthorized)
+                activity.runOnUiThread {
+                    if (state.isAuthorized) onAuthorized()
+                    else onAuthError(ex?.errorDescription ?: "Google 로그인 토큰 발급에 실패했습니다.")
+                }
             }
         }
     }
