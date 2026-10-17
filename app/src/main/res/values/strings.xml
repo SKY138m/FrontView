@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FrontView</string>
+    <string name="notification_listener">FrontView notifications</string>
+</resources>
