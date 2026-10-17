@@ -257,11 +257,11 @@ fun MusicScreen(onClose: () -> Unit) {
             T(MusicSample.TITLE, 44, Color.White, 700)
             T(MusicSample.ARTIST, 28, Palette.OnDark70)
             VGap(24)
-            Bar(0.38f, Palette.Glass, Color.White, 8)
+            Bar(MusicSample.progress, Palette.Glass, Color.White, 8)
             VGap(8)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                T("1:24", 18, Palette.OnDark60)
-                T("-2:17", 18, Palette.OnDark60)
+                T(MusicSample.elapsed, 18, Palette.OnDark60)
+                T(MusicSample.remaining, 18, Palette.OnDark60)
             }
             VGap(24)
             Row(

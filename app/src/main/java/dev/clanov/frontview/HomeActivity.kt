@@ -133,6 +133,14 @@ class HomeActivity : ComponentActivity() {
                             ?: "재생 중인 음악 없음"
                         MusicSample.ARTIST = metadata?.getString(MediaMetadata.METADATA_KEY_ARTIST).orEmpty()
                         MusicSample.isPlaying = session?.playbackState?.state == PlaybackState.STATE_PLAYING
+                        MusicSample.bitmap = metadata?.getBitmap(MediaMetadata.METADATA_KEY_ART)
+                            ?: metadata?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
+                        val duration = metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L
+                        val position = session?.playbackState?.position ?: 0L
+                        MusicSample.progress = if (duration > 0)
+                            (position.toFloat() / duration).coerceIn(0f, 1f) else 0f
+                        MusicSample.elapsed = durationText(position)
+                        MusicSample.remaining = "-" + durationText((duration - position).coerceAtLeast(0L))
                         delay(2_000)
                     }
                 }
@@ -178,6 +186,11 @@ class HomeActivity : ComponentActivity() {
                     }.onFailure(::showError)
                 }
             }.show()
+    }
+
+    private fun durationText(ms: Long): String {
+        val seconds = (ms / 1000).coerceAtLeast(0L)
+        return (seconds / 60).toString() + ":" + (seconds % 60).toString().padStart(2, '0')
     }
 
     private fun openApp(packageName: String) {
