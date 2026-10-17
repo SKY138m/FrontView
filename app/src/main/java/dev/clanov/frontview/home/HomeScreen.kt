@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -73,6 +74,13 @@ fun HomeScreen(
     var fullScreen by rememberSaveable { mutableStateOf<Widget?>(null) }
     var editing by rememberSaveable { mutableStateOf(false) }
     var pickerIndex by rememberSaveable { mutableStateOf<Int?>(null) }
+    var pendingGoogleWidget by rememberSaveable { mutableStateOf<Widget?>(null) }
+    LaunchedEffect(AppActions.googleConnected) {
+        if (AppActions.googleConnected) {
+            pendingGoogleWidget?.let { fullScreen = it }
+            pendingGoogleWidget = null
+        }
+    }
 
     BackHandler(enabled = pickerIndex != null || fullScreen != null || editing) {
         when {
@@ -96,7 +104,10 @@ fun HomeScreen(
                             editing -> pickerIndex = index
                             widget == Widget.GEMINI -> onOpenApp(GEMINI_PACKAGE)
                             (widget == Widget.GMAIL || widget == Widget.CALENDAR || widget == Widget.TASKS) &&
-                                !AppActions.googleConnected() -> AppActions.signIn()
+                                !AppActions.googleConnected -> {
+                                pendingGoogleWidget = widget
+                                AppActions.signIn()
+                            }
                             (widget == Widget.MUSIC || widget == Widget.INSTAGRAM) &&
                                 !AppActions.notificationsEnabled() -> AppActions.openNotifications()
                             widget == Widget.DELIVERY && dev.clanov.frontview.ui.sample.SampleData.parcels.firstOrNull()?.name == "운송장 등록" ->
@@ -109,6 +120,24 @@ fun HomeScreen(
                     if (editing) EmptySlot()
                 } else {
                     WidgetContent(widget, size)
+                    if (!editing && !AppActions.googleConnected &&
+                        (widget == Widget.GMAIL || widget == Widget.CALENDAR || widget == Widget.TASKS)
+                    ) {
+                        Box(
+                            Modifier.align(Alignment.BottomCenter)
+                                .padding(bottom = 12.dx)
+                                .clip(RoundedCornerShape(16.dx))
+                                .background(Palette.Tile)
+                                .border(1.dx, Palette.Blue, RoundedCornerShape(16.dx))
+                                .clickable {
+                                    pendingGoogleWidget = widget
+                                    AppActions.signIn()
+                                }
+                                .padding(horizontal = 16.dx, vertical = 9.dx)
+                        ) {
+                            T("Google 계정 연결", 18, Palette.Blue, 700)
+                        }
+                    }
                 }
                 if (editing) {
                     Box(
@@ -240,7 +269,19 @@ private fun WidgetPicker(current: Widget, onPick: (Widget) -> Unit, onDismiss: (
                     }
                 }
             }
-            VGap(24)
+            VGap(12)
+            Row(
+                Modifier.fillMaxWidth()
+                    .panel(Palette.Tile, 18)
+                    .clickable(onClick = AppActions.signIn)
+                    .padding(20.dx),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                T("Google 계정", 22, Palette.Ink, 700)
+                T(if (AppActions.googleConnected) "다른 계정 연결" else "로그인 / 연결", 18, Palette.Blue, 600)
+            }
+            VGap(12)
         }
     }
 }
