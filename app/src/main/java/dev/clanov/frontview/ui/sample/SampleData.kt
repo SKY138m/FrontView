@@ -12,7 +12,7 @@ data class DayForecast(val name: String, val sky: Sky, val low: Int, val high: I
 data class EventRow(val title: String, val time: String, val color: Color)
 data class TaskRow(val title: String, val done: Boolean, val id: String = "", val listId: String = "")
 data class TaskCount(val name: String, val count: Int, val color: Color)
-data class MailRow(val from: String, val time: String, val subject: String, val preview: String, val unread: Boolean)
+data class MailRow(val from: String, val time: String, val subject: String, val preview: String, val unread: Boolean, val starred: Boolean = false)
 data class DmRow(val initial: String, val name: String, val time: String, val message: String, val unread: Boolean)
 data class NewsRow(val title: String, val source: String, val url: String = "")
 data class ParcelRow(val name: String, val status: String, val sub: String, val progress: Int, val delivered: Boolean)

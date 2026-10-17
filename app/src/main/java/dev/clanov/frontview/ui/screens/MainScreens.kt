@@ -241,7 +241,7 @@ fun CalendarScreen(onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.weight(1f))
-        Box(Modifier.fillMaxWidth().height(64.dx).panel(Palette.Lavender, 32), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxWidth().height(64.dx).panel(Palette.Lavender, 32).clickable { AppActions.openCalendarNewEvent() }, contentAlignment = Alignment.Center) {
             T("새 일정", 24, Color.White, 600)
         }
     }

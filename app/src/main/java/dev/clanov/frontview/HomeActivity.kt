@@ -62,6 +62,8 @@ class HomeActivity : ComponentActivity() {
         }
         AppActions.addTask = { showAddTaskDialog() }
         AppActions.configureParcel = { showParcelDialog() }
+        AppActions.setNewsTopic = { topic -> lifecycleScope.launch { runCatching { sources.news(topic) }.onFailure(::showError) } }
+        AppActions.openCalendarNewEvent = { AppActions.openUrl("https://calendar.google.com/calendar/u/0/r/eventedit") }
         AppActions.notificationsEnabled = {
             Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
                 ?.contains(packageName) == true
@@ -197,6 +199,8 @@ class HomeActivity : ComponentActivity() {
         AppActions.completeTask = {}
         AppActions.addTask = {}
         AppActions.configureParcel = {}
+        AppActions.setNewsTopic = {}
+        AppActions.openCalendarNewEvent = {}
         AppActions.openNotifications = {}
     }
 }

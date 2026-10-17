@@ -48,7 +48,10 @@ class GoogleConnection(private val activity: Activity, private val onAuthorized:
     val isAuthorized: Boolean get() = state.isAuthorized
 
     fun signIn() {
-        if (BuildConfig.GOOGLE_CLIENT_ID.isBlank()) return
+        if (BuildConfig.GOOGLE_CLIENT_ID.isBlank()) {
+            android.widget.Toast.makeText(activity, "Google OAuth Client ID 설정 필요", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
         val config = AuthorizationServiceConfiguration(
             Uri.parse("https://accounts.google.com/o/oauth2/v2/auth"),
             Uri.parse("https://oauth2.googleapis.com/token")
@@ -198,7 +201,8 @@ class GoogleConnection(private val activity: Activity, private val onAuthorized:
             val labels = detail.optJSONArray("labelIds")
             val unread = labels != null && (0 until labels.length()).any { labels.optString(it) == "UNREAD" }
             mails.add(MailRow(header("From"), header("Date").take(16),
-                header("Subject"), detail.optString("snippet"), unread))
+                header("Subject"), detail.optString("snippet"), unread,
+                labels != null && (0 until labels.length()).any { labels.optString(it) == "STARRED" }))
         }
         SampleData.mails = mails.ifEmpty { listOf(MailRow("Gmail", "", "받은 메일 없음", "", false)) }
     }
