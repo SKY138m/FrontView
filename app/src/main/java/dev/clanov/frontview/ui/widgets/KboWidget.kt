@@ -22,12 +22,12 @@ fun KboWidget(size: SlotSize) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Dot(10, Palette.Live)
                     HGap(8)
-                    T("LIVE · 7회 말", 16, Palette.Live, 700)
+                    T(SampleData.statusLine, 16, Palette.Live, 700)
                 }
-                T("팀 A  3 : 2  팀 B", if (size == SlotSize.M) 28 else 40, Color.White, 700)
+                T(SampleData.scoreLine, if (size == SlotSize.M) 28 else 40, Color.White, 700)
                 if (size == SlotSize.L) {
                     VGap(6)
-                    T("B2 S1 O1 · 1, 3루", 20, Palette.OnDark70)
+                    T(SampleData.countLine, 20, Palette.OnDark70)
                     VGap(14)
                 }
                 T("투 : ${SampleData.PITCHER}        타 : ${SampleData.BATTER}", if (size == SlotSize.M) 18 else 22, Palette.OnDark90, 600)
@@ -37,10 +37,10 @@ fun KboWidget(size: SlotSize) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Dot(10, Palette.Live)
                         HGap(8)
-                        T("LIVE · 7회 말", 18, Palette.Live, 700)
+                        T(SampleData.statusLine, 18, Palette.Live, 700)
                     }
-                    T("팀 A  3 : 2  팀 B", 44, Color.White, 700)
-                    T("B2 S1 O1 · 1, 3루", 20, Palette.OnDark70)
+                    T(SampleData.scoreLine, 44, Color.White, 700)
+                    T(SampleData.countLine, 20, Palette.OnDark70)
                 }
                 HGap(20)
                 Column(Modifier.weight(1f)) {

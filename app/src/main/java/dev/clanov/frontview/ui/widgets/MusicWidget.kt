@@ -1,10 +1,18 @@
 package dev.clanov.frontview.ui.widgets
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import android.graphics.Bitmap
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +34,7 @@ fun MusicWidget(size: SlotSize) {
                     T(MusicSample.TITLE, 24, Color.White, 700)
                     T(MusicSample.ARTIST, 18, Palette.OnDark70)
                 }
-                Glyph(GlyphKind.Pause, 36, Color.White)
+                Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 36, Color.White)
             }
             SlotSize.L -> Column(
                 Modifier.fillMaxSize().padding(24.dx),
@@ -37,7 +45,7 @@ fun MusicWidget(size: SlotSize) {
                 T(MusicSample.TITLE, 26, Color.White, 700)
                 T(MusicSample.ARTIST, 20, Palette.OnDark70)
                 VGap(14)
-                Bar(0.38f, Palette.Glass, Color.White, 6)
+                Bar(MusicSample.progress, Palette.Glass, Color.White, 6)
             }
             SlotSize.XL -> Row(
                 Modifier.fillMaxSize().padding(28.dx),
@@ -52,8 +60,8 @@ fun MusicWidget(size: SlotSize) {
                     Bar(0.38f, Palette.Glass, Color.White, 6)
                     VGap(6)
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        T("1:24", 16, Palette.OnDark60)
-                        T("-2:17", 16, Palette.OnDark60)
+                        T(MusicSample.elapsed, 16, Palette.OnDark60)
+                        T(MusicSample.remaining, 16, Palette.OnDark60)
                     }
                     VGap(18)
                     Row(
@@ -61,9 +69,9 @@ fun MusicWidget(size: SlotSize) {
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Glyph(GlyphKind.Prev, 40, Color.White)
-                        Glyph(GlyphKind.Pause, 48, Color.White)
-                        Glyph(GlyphKind.Next, 40, Color.White)
+                        Glyph(GlyphKind.Prev, 40, Color.White, Modifier.clickable { AppActions.music("previous") })
+                        Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 48, Color.White, Modifier.clickable { AppActions.music("toggle") })
+                        Glyph(GlyphKind.Next, 40, Color.White, Modifier.clickable { AppActions.music("next") })
                     }
                 }
             }
@@ -72,11 +80,20 @@ fun MusicWidget(size: SlotSize) {
 }
 
 object MusicSample {
-    const val TITLE = "곡 제목"
-    const val ARTIST = "아티스트"
+    var TITLE by mutableStateOf("재생 중인 음악 없음")
+    var ARTIST by mutableStateOf("")
+    var isPlaying by mutableStateOf(false)
+    var bitmap by mutableStateOf<Bitmap?>(null)
+    var progress by mutableStateOf(0f)
+    var elapsed by mutableStateOf("0:00")
+    var remaining by mutableStateOf("-0:00")
 }
 
 @Composable
 fun Art(size: Int) {
-    Box(Modifier.size(size.dx).clip(androidx.compose.foundation.shape.RoundedCornerShape((size / 8f).dx)).background(Palette.Art))
+    val image = MusicSample.bitmap
+    val modifier = Modifier.size(size.dx)
+        .clip(androidx.compose.foundation.shape.RoundedCornerShape((size / 8f).dx))
+    if (image == null) Box(modifier.background(Palette.Art))
+    else Image(image.asImageBitmap(), null, modifier, contentScale = ContentScale.Crop)
 }

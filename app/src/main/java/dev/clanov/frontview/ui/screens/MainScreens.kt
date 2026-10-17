@@ -1,6 +1,7 @@
 package dev.clanov.frontview.ui.screens
 
 import androidx.compose.foundation.background
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -86,9 +87,9 @@ fun ClockScreen(onClose: () -> Unit) {
 @Composable
 fun WeatherScreen(onClose: () -> Unit) {
     FullFrame(Palette.Weather, onClose, dark = true) {
-        T("서울 강서구", 32, Color.White, 600)
-        T("20°", 156, Color.White, 200)
-        T("맑음 · 최고 22° 최저 11°", 24, Palette.OnDark85)
+        T(SampleData.location, 32, Color.White, 600)
+        T(SampleData.temperature, 156, Color.White, 200)
+        T(SampleData.weatherSummary, 24, Palette.OnDark85)
         VGap(20)
         Row(
             Modifier.fillMaxWidth().panel(Palette.Glass, 24).padding(22.dx),
@@ -168,7 +169,7 @@ fun TasksScreen(onClose: () -> Unit) {
         VGap(8)
         Column(Modifier.fillMaxWidth().panel(Color.White, 20).padding(horizontal = 22.dx, vertical = 10.dx)) {
             SampleData.tasks.forEach { t ->
-                Row(Modifier.fillMaxWidth().padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.fillMaxWidth().clickable { AppActions.completeTask(t) }.padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         Modifier.size(32.dx).clip(CircleShape)
                             .background(if (t.done) Palette.Blue else Palette.Divider),
@@ -181,7 +182,7 @@ fun TasksScreen(onClose: () -> Unit) {
         }
         Spacer(Modifier.weight(1f))
         Box(
-            Modifier.fillMaxWidth().height(64.dx).panel(Palette.Blue, 32),
+            Modifier.fillMaxWidth().height(64.dx).panel(Palette.Blue, 32).clickable { AppActions.addTask() },
             contentAlignment = Alignment.Center
         ) { T("새 할 일", 24, Color.White, 600) }
     }
@@ -240,7 +241,7 @@ fun CalendarScreen(onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.weight(1f))
-        Box(Modifier.fillMaxWidth().height(64.dx).panel(Palette.Lavender, 32), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxWidth().height(64.dx).panel(Palette.Lavender, 32).clickable { AppActions.openCalendarNewEvent() }, contentAlignment = Alignment.Center) {
             T("새 일정", 24, Color.White, 600)
         }
     }
@@ -256,11 +257,11 @@ fun MusicScreen(onClose: () -> Unit) {
             T(MusicSample.TITLE, 44, Color.White, 700)
             T(MusicSample.ARTIST, 28, Palette.OnDark70)
             VGap(24)
-            Bar(0.38f, Palette.Glass, Color.White, 8)
+            Bar(MusicSample.progress, Palette.Glass, Color.White, 8)
             VGap(8)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                T("1:24", 18, Palette.OnDark60)
-                T("-2:17", 18, Palette.OnDark60)
+                T(MusicSample.elapsed, 18, Palette.OnDark60)
+                T(MusicSample.remaining, 18, Palette.OnDark60)
             }
             VGap(24)
             Row(
@@ -268,9 +269,9 @@ fun MusicScreen(onClose: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Glyph(GlyphKind.Prev, 56, Color.White)
-                Glyph(GlyphKind.Pause, 72, Color.White)
-                Glyph(GlyphKind.Next, 56, Color.White)
+                Glyph(GlyphKind.Prev, 56, Color.White, Modifier.clickable { AppActions.music("previous") })
+                Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 72, Color.White, Modifier.clickable { AppActions.music("toggle") })
+                Glyph(GlyphKind.Next, 56, Color.White, Modifier.clickable { AppActions.music("next") })
             }
             VGap(28)
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

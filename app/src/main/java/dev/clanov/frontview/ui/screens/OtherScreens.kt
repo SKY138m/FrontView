@@ -1,10 +1,15 @@
 package dev.clanov.frontview.ui.screens
 
 import androidx.compose.foundation.background
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,6 +20,7 @@ import dev.clanov.frontview.ui.widgets.*
 
 @Composable
 fun GmailScreen(onClose: () -> Unit) {
+    var filter by remember { mutableIntStateOf(0) }
     val unread = SampleData.mails.count { it.unread }
     FullFrame(Palette.Background, onClose) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -25,14 +31,14 @@ fun GmailScreen(onClose: () -> Unit) {
         VGap(14)
         Row(horizontalArrangement = Arrangement.spacedBy(10.dx)) {
             listOf("전체", "안 읽음", "별표").forEachIndexed { i, c ->
-                Box(Modifier.panel(if (i == 0) Palette.MailRed else Palette.Tile, 22).padding(horizontal = 22.dx, vertical = 10.dx)) {
-                    T(c, 20, if (i == 0) Color.White else Palette.Ink, 600)
+                Box(Modifier.panel(if (i == filter) Palette.MailRed else Palette.Tile, 22).clickable { filter = i }.padding(horizontal = 22.dx, vertical = 10.dx)) {
+                    T(c, 20, if (i == filter) Color.White else Palette.Ink, 600)
                 }
             }
         }
         VGap(12)
-        SampleData.mails.forEach { m ->
-            Row(Modifier.fillMaxWidth().padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
+        SampleData.mails.filter { filter == 0 || (filter == 1 && it.unread) || (filter == 2 && it.starred) }.forEach { m ->
+            Row(Modifier.fillMaxWidth().clickable { AppActions.openMail() }.padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
                 if (m.unread) Dot(14, Palette.Blue) else HGap(14)
                 HGap(16)
                 Column(Modifier.weight(1f)) {
@@ -82,25 +88,26 @@ fun InstaScreen(onClose: () -> Unit, onOpenApp: () -> Unit) {
 
 @Composable
 fun NewsScreen(onClose: () -> Unit) {
+    var topic by remember { mutableIntStateOf(0) }
     FullFrame(Palette.Background, onClose) {
         T("Google 뉴스", 44, Palette.Ink, 700)
         VGap(12)
         Row(horizontalArrangement = Arrangement.spacedBy(10.dx)) {
             SampleData.newsChips.forEachIndexed { i, c ->
-                Box(Modifier.panel(if (i == 0) Palette.Blue else Palette.Tile, 22).padding(horizontal = 22.dx, vertical = 10.dx)) {
-                    T(c, 20, if (i == 0) Color.White else Palette.Ink, 600)
+                Box(Modifier.panel(if (i == topic) Palette.Blue else Palette.Tile, 22).clickable { topic = i; AppActions.setNewsTopic(c) }.padding(horizontal = 22.dx, vertical = 10.dx)) {
+                    T(c, 20, if (i == topic) Color.White else Palette.Ink, 600)
                 }
             }
         }
         VGap(16)
-        Column(Modifier.fillMaxWidth().panel(Palette.Blue, 24).background(Palette.NewsFeature).padding(28.dx)) {
+        Column(Modifier.fillMaxWidth().panel(Palette.Blue, 24).background(Palette.NewsFeature).clickable { AppActions.openUrl(SampleData.newsFeature.url) }.padding(28.dx)) {
             T(SampleData.newsFeature.source, 18, Palette.OnDark85)
             VGap(6)
             T(SampleData.newsFeature.title, 34, Color.White, 700, maxLines = 3)
         }
         VGap(10)
         SampleData.news.forEach { n ->
-            Column(Modifier.fillMaxWidth().padding(vertical = 12.dx)) {
+            Column(Modifier.fillMaxWidth().clickable { AppActions.openUrl(n.url) }.padding(vertical = 12.dx)) {
                 T(n.title, 26, Palette.Ink, 600, maxLines = 2)
                 T(n.source, 18, Palette.Muted)
             }
@@ -115,7 +122,7 @@ fun DeliveryScreen(onClose: () -> Unit) {
     FullFrame(Palette.Grouped, onClose) {
         T("배송조회", 44, Palette.Ink, 700)
         VGap(14)
-        Column(Modifier.fillMaxWidth().panel(Color.White, 24).padding(24.dx)) {
+        Column(Modifier.fillMaxWidth().panel(Color.White, 24).clickable { AppActions.configureParcel() }.padding(24.dx)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 T(main.name, 30, Palette.Ink, 700)
                 T(main.status, 24, Palette.Orange, 700)
@@ -157,10 +164,10 @@ fun KboScreen(onClose: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Dot(12, Palette.Live)
             HGap(10)
-            T("LIVE · 7회 말", 22, Palette.Live, 700)
+            T(SampleData.statusLine, 22, Palette.Live, 700)
         }
-        T("팀 A  3 : 2  팀 B", 64, Color.White, 700)
-        T("B2 S1 O1 · 1, 3루", 24, Palette.OnDark70)
+        T(SampleData.scoreLine, 64, Color.White, 700)
+        T(SampleData.countLine, 24, Palette.OnDark70)
         VGap(18)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dx)) {
             listOf("투수" to SampleData.PITCHER, "타자" to SampleData.BATTER).forEach { (role, name) ->

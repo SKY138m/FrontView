@@ -1,6 +1,7 @@
 package dev.clanov.frontview.home
 
 import androidx.activity.compose.BackHandler
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -94,6 +95,12 @@ fun HomeScreen(
                         when {
                             editing -> pickerIndex = index
                             widget == Widget.GEMINI -> onOpenApp(GEMINI_PACKAGE)
+                            (widget == Widget.GMAIL || widget == Widget.CALENDAR || widget == Widget.TASKS) &&
+                                !AppActions.googleConnected() -> AppActions.signIn()
+                            (widget == Widget.MUSIC || widget == Widget.INSTAGRAM) &&
+                                !AppActions.notificationsEnabled() -> AppActions.openNotifications()
+                            widget == Widget.DELIVERY && dev.clanov.frontview.ui.sample.SampleData.parcels.firstOrNull()?.name == "운송장 등록" ->
+                                AppActions.configureParcel()
                             widget.hasFullScreen -> fullScreen = widget
                         }
                     }

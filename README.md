@@ -18,7 +18,9 @@ JDK 17, Android SDK 35, Gradle 8.11.1
     gradle :app:assembleDebug
 
 ## Integrations
-See [docs/integrations.md](docs/integrations.md).
+[API sources](docs/integrations.md) · [Google Cloud setup](docs/google-cloud-handoff.md)
+
+Live weather, news, KBO scores, media state, Instagram notifications and parcel tracking. Google Calendar, Tasks and Gmail use OAuth.
 
 ## License
 Apache-2.0

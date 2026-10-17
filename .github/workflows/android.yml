@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,3 +28,7 @@ jobs:
           gradle-version: '8.11.1'
       - run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontview-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
