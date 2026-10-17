@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LauncherViewModel(private val settings: LauncherSettings) : ViewModel() {
-    val slots = settings.slots.stateIn(
+    val layout = settings.layout.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
-        QuickSlots()
+        HomeLayout()
     )
 
-    fun selectSecondary(slot: QuickSlot) {
-        viewModelScope.launch { settings.setSecondary(slot) }
+    fun place(index: Int, widget: Widget) {
+        viewModelScope.launch { settings.save(layout.value.place(index, widget)) }
     }
 
     class Factory(private val settings: LauncherSettings) : ViewModelProvider.Factory {
