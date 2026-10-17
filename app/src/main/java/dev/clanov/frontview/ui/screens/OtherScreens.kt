@@ -157,10 +157,10 @@ fun KboScreen(onClose: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Dot(12, Palette.Live)
             HGap(10)
-            T("LIVE · 7회 말", 22, Palette.Live, 700)
+            T(SampleData.statusLine, 22, Palette.Live, 700)
         }
-        T("팀 A  3 : 2  팀 B", 64, Color.White, 700)
-        T("B2 S1 O1 · 1, 3루", 24, Palette.OnDark70)
+        T(SampleData.scoreLine, 64, Color.White, 700)
+        T(SampleData.countLine, 24, Palette.OnDark70)
         VGap(18)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dx)) {
             listOf("투수" to SampleData.PITCHER, "타자" to SampleData.BATTER).forEach { (role, name) ->

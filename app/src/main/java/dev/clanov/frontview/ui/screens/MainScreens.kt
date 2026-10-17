@@ -86,9 +86,9 @@ fun ClockScreen(onClose: () -> Unit) {
 @Composable
 fun WeatherScreen(onClose: () -> Unit) {
     FullFrame(Palette.Weather, onClose, dark = true) {
-        T("서울 강서구", 32, Color.White, 600)
-        T("20°", 156, Color.White, 200)
-        T("맑음 · 최고 22° 최저 11°", 24, Palette.OnDark85)
+        T(SampleData.location, 32, Color.White, 600)
+        T(SampleData.temperature, 156, Color.White, 200)
+        T(SampleData.weatherSummary, 24, Palette.OnDark85)
         VGap(20)
         Row(
             Modifier.fillMaxWidth().panel(Palette.Glass, 24).padding(22.dx),

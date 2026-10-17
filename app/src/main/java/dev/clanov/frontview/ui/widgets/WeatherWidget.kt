@@ -22,16 +22,16 @@ fun WeatherWidget(size: SlotSize) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    T("서울 강서구", 20, Palette.OnDark85, 600)
-                    T("맑음", 20, Palette.OnDark70)
+                    T(SampleData.location, 20, Palette.OnDark85, 600)
+                    T(SampleData.weatherSummary.substringBefore(" ·"), 20, Palette.OnDark70)
                 }
-                T("20°", 72, Color.White, 200)
+                T(SampleData.temperature, 72, Color.White, 200)
             }
             SlotSize.L -> Column(Modifier.fillMaxSize().padding(24.dx)) {
-                T("서울 강서구", 22, Palette.OnDark85, 600)
+                T(SampleData.location, 22, Palette.OnDark85, 600)
                 VGap(4)
-                T("20°", 112, Color.White, 200)
-                T("맑음 · 최고 22° 최저 11°", 20, Palette.OnDark70)
+                T(SampleData.temperature, 112, Color.White, 200)
+                T(SampleData.weatherSummary, 20, Palette.OnDark70)
                 VGap(18)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     SampleData.hours.take(4).forEach { h -> HourCell(h) }
@@ -39,9 +39,9 @@ fun WeatherWidget(size: SlotSize) {
             }
             SlotSize.XL -> Row(Modifier.fillMaxSize().padding(28.dx), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.width(260.dx)) {
-                    T("서울 강서구", 24, Palette.OnDark85, 600)
-                    T("20°", 128, Color.White, 200)
-                    T("맑음 · 최고 22° 최저 11°", 20, Palette.OnDark70)
+                    T(SampleData.location, 24, Palette.OnDark85, 600)
+                    T(SampleData.temperature, 128, Color.White, 200)
+                    T(SampleData.weatherSummary, 20, Palette.OnDark70)
                 }
                 HGap(24)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +28,7 @@ fun MusicWidget(size: SlotSize) {
                     T(MusicSample.TITLE, 24, Color.White, 700)
                     T(MusicSample.ARTIST, 18, Palette.OnDark70)
                 }
-                Glyph(GlyphKind.Pause, 36, Color.White)
+                Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 36, Color.White)
             }
             SlotSize.L -> Column(
                 Modifier.fillMaxSize().padding(24.dx),
@@ -62,7 +64,7 @@ fun MusicWidget(size: SlotSize) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Glyph(GlyphKind.Prev, 40, Color.White)
-                        Glyph(GlyphKind.Pause, 48, Color.White)
+                        Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 48, Color.White)
                         Glyph(GlyphKind.Next, 40, Color.White)
                     }
                 }
@@ -72,8 +74,9 @@ fun MusicWidget(size: SlotSize) {
 }
 
 object MusicSample {
-    const val TITLE = "곡 제목"
-    const val ARTIST = "아티스트"
+    var TITLE by mutableStateOf("재생 중인 음악 없음")
+    var ARTIST by mutableStateOf("")
+    var isPlaying by mutableStateOf(false)
 }
 
 @Composable
