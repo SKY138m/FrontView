@@ -110,7 +110,8 @@ class HomeActivity : ComponentActivity() {
                 launch {
                     while (isActive) {
                         runCatching { sources.baseball() }.onFailure(::showError)
-                        delay(45_000)
+                        val live = dev.clanov.frontview.ui.sample.SampleData.games.any { it.live }
+                        delay(if (live) 30_000L else 10 * 60 * 1000L)
                     }
                 }
                 launch {
