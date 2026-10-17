@@ -29,6 +29,17 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${appAuthRedirectScheme}" android:path="/oauth2redirect" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".integrations.InstagramNotificationListener"
             android:label="@string/notification_listener"
