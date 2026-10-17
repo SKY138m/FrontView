@@ -126,11 +126,14 @@ class PublicSources(private val client: OkHttpClient = OkHttpClient()) {
             .addQueryParameter("t_invoice", invoice)
             .build()
         val response = JSONObject(get(url.toString()))
+        check(!response.has("status") || response.optBoolean("status")) {
+            response.optString("msg", "배송조회 오류")
+        }
         val code = response.optString("code")
         check(code == "0" || code == "200" || code == "") {
             "Parcel API code " + code
         }
-        val done = response.optString("completeYN").equals("Y", true)
+        val done = response.optString("completeYN").equals("Y", true) || response.optBoolean("complete", false)
         val details = response.optJSONArray("trackingDetails")
         val steps = mutableListOf<TrackStep>()
         if (details != null) {
@@ -151,7 +154,7 @@ class PublicSources(private val client: OkHttpClient = OkHttpClient()) {
             done -> 5
             status.contains("배송 출발") -> 4
             status.contains("터미널") || status.contains("이동") -> 3
-            steps.isNotEmpty() -> 1
+            steps.isNotEmpty() -> (details?.optJSONObject(details.length() - 1)?.optInt("level") ?: 1).coerceIn(1, 5)
             else -> 0
         }
         SampleData.parcels = listOf(

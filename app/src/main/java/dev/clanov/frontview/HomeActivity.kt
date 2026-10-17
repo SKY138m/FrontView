@@ -71,6 +71,11 @@ class HomeActivity : ComponentActivity() {
         AppActions.openNotifications = {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
+        AppActions.openMail = {
+            val gmail = packageManager.getLaunchIntentForPackage("com.google.android.gm")
+            if (gmail != null) startActivity(gmail)
+            else AppActions.openUrl("https://mail.google.com/mail/u/0/#inbox")
+        }
         AppActions.openUrl = { url ->
             if (url.startsWith("https://")) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         }
@@ -208,6 +213,7 @@ class HomeActivity : ComponentActivity() {
         google.close()
         AppActions.signIn = {}
         AppActions.openUrl = {}
+        AppActions.openMail = {}
         AppActions.music = {}
         AppActions.completeTask = {}
         AppActions.addTask = {}

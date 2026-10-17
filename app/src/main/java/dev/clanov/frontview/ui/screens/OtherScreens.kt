@@ -38,7 +38,7 @@ fun GmailScreen(onClose: () -> Unit) {
         }
         VGap(12)
         SampleData.mails.filter { filter == 0 || (filter == 1 && it.unread) || (filter == 2 && it.starred) }.forEach { m ->
-            Row(Modifier.fillMaxWidth().padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth().clickable { AppActions.openMail() }.padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
                 if (m.unread) Dot(14, Palette.Blue) else HGap(14)
                 HGap(16)
                 Column(Modifier.weight(1f)) {
