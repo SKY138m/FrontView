@@ -14,13 +14,13 @@ class LauncherSettings(private val context: Context) {
 
     val slots: Flow<QuickSlots> = context.launcherStore.data.map { preferences ->
         val second = QuickSlot.entries.firstOrNull {
-            it.name == preferences[secondKey] && it != QuickSlot.MUSE
+            it.name == preferences[secondKey] && it != QuickSlot.GEMINI
         } ?: QuickSlot.GMAIL
         QuickSlots(second = second)
     }
 
     suspend fun setSecondary(slot: QuickSlot) {
-        require(slot != QuickSlot.MUSE)
+        require(slot != QuickSlot.GEMINI)
         context.launcherStore.edit { it[secondKey] = slot.name }
     }
 }

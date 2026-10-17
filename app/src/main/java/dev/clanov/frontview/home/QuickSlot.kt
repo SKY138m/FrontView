@@ -1,7 +1,7 @@
 package dev.clanov.frontview.home
 
 enum class QuickSlot(val label: String) {
-    MUSE("Muse"),
+    GEMINI("Gemini"),
     GMAIL("Gmail"),
     INSTAGRAM("Instagram DM"),
     NEWS("Google News"),
@@ -10,7 +10,7 @@ enum class QuickSlot(val label: String) {
 }
 
 data class QuickSlots(
-    val first: QuickSlot = QuickSlot.MUSE,
+    val first: QuickSlot = QuickSlot.GEMINI,
     val second: QuickSlot = QuickSlot.GMAIL
 ) {
     init {
@@ -19,6 +19,6 @@ data class QuickSlots(
 }
 
 fun nextSecondary(current: QuickSlot): QuickSlot {
-    val options = QuickSlot.entries.filterNot { it == QuickSlot.MUSE }
+    val options = QuickSlot.entries.filterNot { it == QuickSlot.GEMINI }
     return options[(options.indexOf(current) + 1).mod(options.size)]
 }

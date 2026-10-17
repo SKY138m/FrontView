@@ -11,7 +11,7 @@
 | News | Google News RSS | HTTPS RSS |
 | Delivery | SweetTracker | API key |
 | Baseball | KBO + Naver Sports | Website / undocumented API |
-| Muse | Muse app | Android app launch |
+| Gemini | Gemini app | Android app launch |
 
 ## Google
 - Calendar: `GET https://www.googleapis.com/calendar/v3/calendars/primary/events`

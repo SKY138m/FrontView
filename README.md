@@ -7,7 +7,7 @@ Kotlin · Jetpack Compose · Android API 35 · Apache-2.0
 
 ## Home
 - Clock / weather
-- #1 Muse · #2 customizable (Gmail, Instagram, News, Delivery, KBO)
+- #1 Gemini · #2 customizable (Gmail, Instagram, News, Delivery, KBO)
 - Google Tasks / Google Calendar
 - Apple Music
 

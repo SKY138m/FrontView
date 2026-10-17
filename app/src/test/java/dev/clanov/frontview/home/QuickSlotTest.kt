@@ -7,13 +7,13 @@ import org.junit.Test
 class QuickSlotTest {
     @Test fun defaultSlots() {
         val slots = QuickSlots()
-        assertEquals(QuickSlot.MUSE, slots.first)
+        assertEquals(QuickSlot.GEMINI, slots.first)
         assertEquals(QuickSlot.GMAIL, slots.second)
     }
 
-    @Test fun cyclingSkipsMuse() {
-        for (slot in QuickSlot.entries.filterNot { it == QuickSlot.MUSE }) {
-            assertNotEquals(QuickSlot.MUSE, nextSecondary(slot))
+    @Test fun cyclingSkipsGemini() {
+        for (slot in QuickSlot.entries.filterNot { it == QuickSlot.GEMINI }) {
+            assertNotEquals(QuickSlot.GEMINI, nextSecondary(slot))
         }
     }
 }
