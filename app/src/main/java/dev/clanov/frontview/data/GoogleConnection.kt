@@ -65,7 +65,10 @@ class GoogleConnection(private val activity: Activity, private val onAuthorized:
             GoogleApi.CALENDAR_SCOPE,
             GoogleApi.TASKS_SCOPE,
             "https://www.googleapis.com/auth/gmail.readonly"
-        ).build()
+        ).setAdditionalParameters(mapOf(
+            "access_type" to "offline",
+            "prompt" to "consent"
+        )).build()
         activity.startActivityForResult(service.getAuthorizationRequestIntent(request), REQUEST_CODE)
     }
 
