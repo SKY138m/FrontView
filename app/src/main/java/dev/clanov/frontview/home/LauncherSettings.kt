@@ -10,17 +10,13 @@ import kotlinx.coroutines.flow.map
 private val Context.launcherStore by preferencesDataStore(name = "launcher")
 
 class LauncherSettings(private val context: Context) {
-    private val secondKey = stringPreferencesKey("second_slot")
+    private val layoutKey = stringPreferencesKey("layout")
 
-    val slots: Flow<QuickSlots> = context.launcherStore.data.map { preferences ->
-        val second = QuickSlot.entries.firstOrNull {
-            it.name == preferences[secondKey] && it != QuickSlot.GEMINI
-        } ?: QuickSlot.GMAIL
-        QuickSlots(second = second)
+    val layout: Flow<HomeLayout> = context.launcherStore.data.map { preferences ->
+        HomeLayout.parse(preferences[layoutKey])
     }
 
-    suspend fun setSecondary(slot: QuickSlot) {
-        require(slot != QuickSlot.GEMINI)
-        context.launcherStore.edit { it[secondKey] = slot.name }
+    suspend fun save(layout: HomeLayout) {
+        context.launcherStore.edit { it[layoutKey] = layout.serialize() }
     }
 }
