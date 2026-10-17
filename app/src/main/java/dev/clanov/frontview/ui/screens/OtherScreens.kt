@@ -1,6 +1,7 @@
 package dev.clanov.frontview.ui.screens
 
 import androidx.compose.foundation.background
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -100,7 +101,7 @@ fun NewsScreen(onClose: () -> Unit) {
         }
         VGap(10)
         SampleData.news.forEach { n ->
-            Column(Modifier.fillMaxWidth().padding(vertical = 12.dx)) {
+            Column(Modifier.fillMaxWidth().clickable { AppActions.openUrl(n.url) }.padding(vertical = 12.dx)) {
                 T(n.title, 26, Palette.Ink, 600, maxLines = 2)
                 T(n.source, 18, Palette.Muted)
             }
@@ -115,7 +116,7 @@ fun DeliveryScreen(onClose: () -> Unit) {
     FullFrame(Palette.Grouped, onClose) {
         T("배송조회", 44, Palette.Ink, 700)
         VGap(14)
-        Column(Modifier.fillMaxWidth().panel(Color.White, 24).padding(24.dx)) {
+        Column(Modifier.fillMaxWidth().panel(Color.White, 24).clickable { AppActions.configureParcel() }.padding(24.dx)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 T(main.name, 30, Palette.Ink, 700)
                 T(main.status, 24, Palette.Orange, 700)

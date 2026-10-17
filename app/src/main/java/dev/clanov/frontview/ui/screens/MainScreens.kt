@@ -1,6 +1,7 @@
 package dev.clanov.frontview.ui.screens
 
 import androidx.compose.foundation.background
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -168,7 +169,7 @@ fun TasksScreen(onClose: () -> Unit) {
         VGap(8)
         Column(Modifier.fillMaxWidth().panel(Color.White, 20).padding(horizontal = 22.dx, vertical = 10.dx)) {
             SampleData.tasks.forEach { t ->
-                Row(Modifier.fillMaxWidth().padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.fillMaxWidth().clickable { AppActions.completeTask(t) }.padding(vertical = 12.dx), verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         Modifier.size(32.dx).clip(CircleShape)
                             .background(if (t.done) Palette.Blue else Palette.Divider),
@@ -181,7 +182,7 @@ fun TasksScreen(onClose: () -> Unit) {
         }
         Spacer(Modifier.weight(1f))
         Box(
-            Modifier.fillMaxWidth().height(64.dx).panel(Palette.Blue, 32),
+            Modifier.fillMaxWidth().height(64.dx).panel(Palette.Blue, 32).clickable { AppActions.addTask() },
             contentAlignment = Alignment.Center
         ) { T("새 할 일", 24, Color.White, 600) }
     }
@@ -268,9 +269,9 @@ fun MusicScreen(onClose: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Glyph(GlyphKind.Prev, 56, Color.White)
-                Glyph(GlyphKind.Pause, 72, Color.White)
-                Glyph(GlyphKind.Next, 56, Color.White)
+                Glyph(GlyphKind.Prev, 56, Color.White, Modifier.clickable { AppActions.music("previous") })
+                Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 72, Color.White, Modifier.clickable { AppActions.music("toggle") })
+                Glyph(GlyphKind.Next, 56, Color.White, Modifier.clickable { AppActions.music("next") })
             }
             VGap(28)
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

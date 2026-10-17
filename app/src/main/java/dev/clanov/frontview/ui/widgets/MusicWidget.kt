@@ -1,6 +1,8 @@
 package dev.clanov.frontview.ui.widgets
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import dev.clanov.frontview.data.AppActions
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -63,9 +65,9 @@ fun MusicWidget(size: SlotSize) {
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Glyph(GlyphKind.Prev, 40, Color.White)
-                        Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 48, Color.White)
-                        Glyph(GlyphKind.Next, 40, Color.White)
+                        Glyph(GlyphKind.Prev, 40, Color.White, Modifier.clickable { AppActions.music("previous") })
+                        Glyph(if (MusicSample.isPlaying) GlyphKind.Pause else GlyphKind.Next, 48, Color.White, Modifier.clickable { AppActions.music("toggle") })
+                        Glyph(GlyphKind.Next, 40, Color.White, Modifier.clickable { AppActions.music("next") })
                     }
                 }
             }

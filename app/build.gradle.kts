@@ -20,8 +20,8 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         manifestPlaceholders["appAuthRedirectScheme"] = googleRedirectScheme
-        buildConfigField("String", "GOOGLE_CLIENT_ID", "\\"" + googleClientId + "\\"")
-        buildConfigField("String", "GOOGLE_REDIRECT_URI", "\\"" + googleRedirectScheme + ":/oauth2redirect\\"")
+        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"" + googleClientId + "\"")
+        buildConfigField("String", "GOOGLE_REDIRECT_URI", "\"" + googleRedirectScheme + ":/oauth2redirect" + "\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
